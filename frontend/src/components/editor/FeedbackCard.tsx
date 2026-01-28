@@ -55,33 +55,34 @@ export function FeedbackCard({
       exit={{ opacity: 0, y: -10 }}
       onClick={onSelect}
       className={`p-4 rounded-lg border cursor-pointer transition-all ${config.bg} ${config.border} ${
-        isSelected ? 'ring-2 ring-orange-500' : ''
+        isSelected ? 'ring-2 ring-primary' : ''
       }`}
     >
       <div className="flex items-start gap-3">
         <Icon className={`w-5 h-5 mt-0.5 ${config.color}`} />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-2">
             <Badge variant="secondary" className={config.badge}>
               {annotation.category}
             </Badge>
           </div>
-          <p className="text-sm text-gray-800 mb-2">
-            {annotation.message}
-          </p>
           {annotation.suggestion && (
-            <div className="bg-white rounded-md p-2 text-sm border border-gray-200">
-              <span className="text-gray-500">Suggestion: </span>
-              <span className="text-orange-600">
+            <div className="bg-card rounded-md p-3 text-sm border mb-3">
+              <p className="font-semibold text-foreground mb-1">Suggestion</p>
+              <p className="text-primary font-medium">
                 {annotation.suggestion}
-              </span>
+              </p>
             </div>
           )}
-          <div className="flex gap-2 mt-3">
+          <p className="text-sm text-muted-foreground mb-3">
+            <span className="font-semibold text-foreground">Reasoning: </span>
+            {annotation.message}
+          </p>
+          <div className="flex gap-2">
             {annotation.suggestion && onApplySuggestion && (
               <Button
                 size="sm"
-                variant="outline"
+                variant="default"
                 onClick={(e) => {
                   e.stopPropagation()
                   onApplySuggestion()
@@ -89,7 +90,7 @@ export function FeedbackCard({
                 className="h-7 text-xs gap-1"
               >
                 <Check className="w-3 h-3" />
-                Apply
+                Apply Suggestion
               </Button>
             )}
             <Button

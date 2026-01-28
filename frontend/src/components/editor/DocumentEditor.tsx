@@ -32,6 +32,7 @@ interface DocumentEditorProps {
   onAnalysisComplete: (response: AnalysisResponse) => void
   onAnnotationClick: (id: string) => void
   selectedAnnotationId: string | null
+  suggestionToApply: Annotation | null
 }
 
 export function DocumentEditor({
@@ -42,6 +43,7 @@ export function DocumentEditor({
   onAnalysisComplete,
   onAnnotationClick,
   selectedAnnotationId,
+  suggestionToApply,
 }: DocumentEditorProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -65,7 +67,7 @@ export function DocumentEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-lg prose-gray max-w-none focus:outline-none min-h-[400px] px-4 py-2 text-gray-900',
+          'prose prose-lg prose-gray max-w-none focus:outline-none min-h-[400px] px-4 py-2 text-foreground',
       },
       handleClick: (_view, _pos, event) => {
         const target = event.target as HTMLElement
@@ -112,6 +114,18 @@ export function DocumentEditor({
       setTitle(document.title)
     }
   }, [document, editor])
+
+  useEffect(() => {
+    if (suggestionToApply && editor) {
+      const { start_offset, end_offset, suggestion } = suggestionToApply
+      editor
+        .chain()
+        .focus()
+        .deleteRange({ from: start_offset, to: end_offset })
+        .insertContent(suggestion || '')
+        .run()
+    }
+  }, [suggestionToApply, editor])
 
   // Apply annotations to the editor when they change
   useEffect(() => {
@@ -207,15 +221,15 @@ export function DocumentEditor({
   const wordCount = editor.getText().split(/\s+/).filter((w) => w.length > 0).length
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-background">
       {/* Toolbar */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+      <div className="flex items-center justify-between p-4 border-b bg-card">
         <div className="flex items-center gap-2">
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={handleTitleBlur}
-            className="text-lg font-semibold border-none shadow-none focus-visible:ring-0 px-0 w-64 text-gray-900 bg-transparent"
+            className="text-lg font-semibold border-none shadow-none focus-visible:ring-0 px-0 w-64 text-foreground bg-transparent"
           />
           {isSaving && (
             <Badge variant="secondary" className="gap-1">
@@ -231,7 +245,7 @@ export function DocumentEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().toggleBold().run()}
-              className={`rounded-none ${editor.isActive('bold') ? 'bg-gray-100' : ''}`}
+              className={`rounded-none ${editor.isActive('bold') ? 'bg-muted' : ''}`}
             >
               <Bold className="w-4 h-4" />
             </Button>
@@ -239,7 +253,7 @@ export function DocumentEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={`rounded-none ${editor.isActive('italic') ? 'bg-gray-100' : ''}`}
+              className={`rounded-none ${editor.isActive('italic') ? 'bg-muted' : ''}`}
             >
               <Italic className="w-4 h-4" />
             </Button>
@@ -247,7 +261,7 @@ export function DocumentEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={`rounded-none ${editor.isActive('underline') ? 'bg-gray-100' : ''}`}
+              className={`rounded-none ${editor.isActive('underline') ? 'bg-muted' : ''}`}
             >
               <UnderlineIcon className="w-4 h-4" />
             </Button>
@@ -255,7 +269,7 @@ export function DocumentEditor({
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().toggleHighlight().run()}
-              className={`rounded-none ${editor.isActive('highlight') ? 'bg-gray-100' : ''}`}
+              className={`rounded-none ${editor.isActive('highlight') ? 'bg-muted' : ''}`}
             >
               <Highlighter className="w-4 h-4" />
             </Button>
@@ -298,16 +312,16 @@ export function DocumentEditor({
       )}
 
       {/* Editor */}
-      <div className="flex-1 overflow-auto bg-[#F5F5F5]">
+      <div className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[600px]">
+          <div className="bg-card rounded-lg shadow-sm border min-h-[600px]">
             <EditorContent editor={editor} />
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-2 border-t border-gray-200 bg-white text-sm text-gray-500">
+      <div className="flex items-center justify-between px-4 py-2 border-t bg-card text-sm text-muted-foreground">
         <span>{wordCount} words</span>
         <span>{document?.status === 'analyzed' ? 'Last analyzed' : 'Not analyzed yet'}</span>
       </div>

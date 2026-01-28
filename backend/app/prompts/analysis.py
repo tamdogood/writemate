@@ -46,10 +46,10 @@ Respond with a JSON object in this exact format:
             "end_offset": <integer - character position where issue ends>,
             "category": "<style|structure|voice|clarity|impact|grammar>",
             "severity": "<info|warning|error>",
-            "message": "<brief description of why this could be stronger>",
-            "suggestion": "<the key insight or technique to apply>",
-            "rewritten_version": "<show them how this passage could sing - provide a polished rewrite>",
-            "principle": "<the timeless writing principle this teaches, e.g., 'Show, don't tell' or 'Vary sentence length for rhythm'>"
+            "message": "<brief explanation of what makes this weaker and why the rewrite is better>",
+            "suggestion": "<EXACT replacement text the user can copy-paste to fix this specific span>",
+            "rewritten_version": "<the full sentence or passage rewritten beautifully - shows context>",
+            "principle": "<the timeless writing principle this teaches>"
         }}
     ],
     "scores": {{
@@ -79,13 +79,15 @@ Respond with a JSON object in this exact format:
 Guidelines for world-class feedback:
 - Provide 3-7 HIGH-IMPACT annotations (quality over quantity)
 - Focus on style, structure, voice, and clarity - only flag grammar for significant errors
-- Every annotation MUST include a rewritten_version showing what excellence looks like
-- Every annotation MUST include a principle the writer can apply to all their future writing
+- CRITICAL: The "suggestion" field must be the EXACT replacement text for the highlighted span - ready to copy-paste
+- CRITICAL: NEVER give generic advice like "do a punctuation pass" or "consider varying sentence length"
+- Every suggestion must be CONCRETE: show the actual words to use, not advice about what to do
+- The "rewritten_version" shows the full sentence/passage rewritten beautifully for context
+- The "principle" teaches why this change improves the writing
 - Transform clunky prose into elegant sentences in your rewrites
 - Tailor feedback to the writer's goals (academic, creative, professional, etc.)
 - Character offsets must be exact positions in the original text
-- Vocabulary suggestions should expand their expressive range, not just define words
-- Be encouraging but push them toward greatness"""
+- Vocabulary suggestions should expand their expressive range, not just define words"""
 
 
 def build_analysis_prompt(

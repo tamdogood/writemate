@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/contexts/SessionContext'
-import { useDocuments } from '@/hooks/useDocuments'
+import { useDocuments, type Annotation } from '@/hooks/useDocuments'
 import { DocumentEditor, DocumentList, FeedbackPanel } from '@/components/editor'
 import { Navbar } from '@/components/shared'
 import { Loader2 } from 'lucide-react'
@@ -28,6 +28,7 @@ export default function EditorPage() {
   } = useDocuments()
 
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null)
+  const [suggestionToApply, setSuggestionToApply] = useState<Annotation | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
 
   useEffect(() => {
@@ -111,16 +112,25 @@ export default function EditorPage() {
     [dismissAnnotation, selectedAnnotationId]
   )
 
+  const handleApplySuggestion = useCallback((annotation: Annotation) => {
+    setSuggestionToApply(annotation)
+    // After applying suggestion, we can remove the annotation
+    setTimeout(() => {
+      dismissAnnotation(annotation.id)
+      setSuggestionToApply(null)
+    }, 100)
+  }, [dismissAnnotation])
+
   if (sessionLoading || !sessionId) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#F5F5F5]">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+      <div className="h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#F5F5F5]">
+    <div className="h-screen flex flex-col bg-background">
       <Navbar variant="app" />
 
       {/* Main content */}
@@ -147,6 +157,7 @@ export default function EditorPage() {
                   onAnalysisComplete={handleAnalysisComplete}
                   onAnnotationClick={setSelectedAnnotationId}
                   selectedAnnotationId={selectedAnnotationId}
+                  suggestionToApply={suggestionToApply}
                 />
               </div>
 
@@ -157,6 +168,7 @@ export default function EditorPage() {
                     selectedAnnotationId={selectedAnnotationId}
                     onSelectAnnotation={setSelectedAnnotationId}
                     onDismissAnnotation={handleDismissAnnotation}
+                    onApplySuggestion={handleApplySuggestion}
                   />
                 </div>
               )}
@@ -164,16 +176,13 @@ export default function EditorPage() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2 text-gray-900">No document selected</h2>
-                <p className="text-gray-500 mb-4">
+                <h2 className="text-xl font-semibold mb-2 text-foreground">No document selected</h2>
+                <p className="text-muted-foreground mb-4">
                   Select a document or create a new one to get started
                 </p>
-                <button
-                  onClick={handleCreateDocument}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
-                >
+                <Button onClick={handleCreateDocument}>
                   Create New Document
-                </button>
+                </Button>
               </div>
             </div>
           )}

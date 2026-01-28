@@ -28,7 +28,7 @@ export function FeedbackPanel({
   const renderAnnotationList = (items: Annotation[]) => {
     if (items.length === 0) {
       return (
-        <div className="text-center text-gray-500 py-8">
+        <div className="text-center text-muted-foreground py-8">
           No issues in this category
         </div>
       )
@@ -55,10 +55,10 @@ export function FeedbackPanel({
   }
 
   return (
-    <div className="h-full flex flex-col bg-white border-l border-gray-200">
-      <div className="p-4 border-b border-gray-200 flex-shrink-0">
-        <h2 className="font-semibold text-lg text-gray-900">Feedback</h2>
-        <p className="text-sm text-gray-500">
+    <div className="h-full flex flex-col bg-card border-l">
+      <div className="p-4 border-b flex-shrink-0">
+        <h2 className="font-semibold text-lg text-foreground">Feedback</h2>
+        <p className="text-sm text-muted-foreground">
           {annotations.length} issues found
         </p>
       </div>

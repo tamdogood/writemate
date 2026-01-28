@@ -31,8 +31,8 @@ export function DocumentList({
   }
 
   return (
-    <div className="w-64 h-full flex flex-col bg-white border-r border-gray-200">
-      <div className="p-4 border-b border-gray-200">
+    <div className="w-64 h-full flex flex-col bg-card border-r">
+      <div className="p-4 border-b">
         <Button onClick={onCreateDocument} className="w-full gap-2">
           <Plus className="w-4 h-4" />
           New Document
@@ -42,7 +42,7 @@ export function DocumentList({
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-1">
           {documents.length === 0 ? (
-            <div className="text-center text-gray-500 py-8 px-4">
+            <div className="text-center text-muted-foreground py-8 px-4">
               <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No documents yet</p>
               <p className="text-xs mt-1">Create one to get started</p>
@@ -59,17 +59,17 @@ export function DocumentList({
                   onClick={() => onSelectDocument(doc.id)}
                   className={`w-full text-left p-3 rounded-lg transition-colors group cursor-pointer ${
                     currentDocumentId === doc.id
-                      ? 'bg-orange-50 border border-orange-200'
-                      : 'hover:bg-gray-50'
+                      ? 'bg-primary/10 border border-primary/20'
+                      : 'hover:bg-muted'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <span className="font-medium truncate">{doc.title}</span>
+                        <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        <span className="font-medium truncate text-foreground">{doc.title}</span>
                       </div>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                         <span>{doc.word_count} words</span>
                         <span>·</span>
                         <span>{formatDate(doc.updated_at)}</span>
@@ -79,7 +79,7 @@ export function DocumentList({
                       {doc.status === 'analyzed' && (
                         <Badge
                           variant="secondary"
-                          className="text-xs bg-green-100 text-green-700"
+                          className="text-xs bg-green-500/10 text-green-500"
                         >
                           <CheckCircle2 className="w-3 h-3 mr-1" />
                           Analyzed
@@ -92,7 +92,7 @@ export function DocumentList({
                           e.stopPropagation()
                           onDeleteDocument(doc.id)
                         }}
-                        className="opacity-0 group-hover:opacity-100 h-7 w-7 p-0 text-gray-400 hover:text-red-500"
+                        className="opacity-0 group-hover:opacity-100 h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -107,3 +107,4 @@ export function DocumentList({
     </div>
   )
 }
+
