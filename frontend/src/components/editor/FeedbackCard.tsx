@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,76 +39,77 @@ const severityConfig = {
   },
 }
 
-export function FeedbackCard({
-  annotation,
-  isSelected,
-  onSelect,
-  onDismiss,
-  onApplySuggestion,
-}: FeedbackCardProps) {
-  const config = severityConfig[annotation.severity]
-  const Icon = config.icon
+export const FeedbackCard = React.forwardRef<HTMLDivElement, FeedbackCardProps>(
+  ({ annotation, isSelected, onSelect, onDismiss, onApplySuggestion }, ref) => {
+    const config = severityConfig[annotation.severity]
+    const Icon = config.icon
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      onClick={onSelect}
-      className={`p-4 rounded-lg border cursor-pointer transition-all ${config.bg} ${config.border} ${
-        isSelected ? 'ring-2 ring-primary' : ''
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <Icon className={`w-5 h-5 mt-0.5 ${config.color}`} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary" className={config.badge}>
-              {annotation.category}
-            </Badge>
-          </div>
-          {annotation.suggestion && (
-            <div className="bg-card rounded-md p-3 text-sm border mb-3">
-              <p className="font-semibold text-foreground mb-1">Suggestion</p>
-              <p className="text-primary font-medium">
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        onClick={onSelect}
+        className={`p-4 rounded-lg border cursor-pointer transition-all ${config.bg} ${config.border} ${
+          isSelected ? 'ring-2 ring-primary' : ''
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          <Icon className={`w-5 h-5 mt-0.5 ${config.color}`} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="secondary" className={config.badge}>
+                {annotation.category}
+              </Badge>
+            </div>
+            
+            {annotation.suggestion && (
+              <p className="text-lg text-primary font-medium mb-3">
                 {annotation.suggestion}
               </p>
-            </div>
-          )}
-          <p className="text-sm text-muted-foreground mb-3">
-            <span className="font-semibold text-foreground">Reasoning: </span>
-            {annotation.message}
-          </p>
-          <div className="flex gap-2">
-            {annotation.suggestion && onApplySuggestion && (
+            )}
+
+            <div className="flex gap-2 mb-3">
+              {annotation.suggestion && onApplySuggestion && (
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onApplySuggestion()
+                  }}
+                  className="h-7 text-xs gap-1"
+                >
+                  <Check className="w-3 h-3" />
+                  Apply Suggestion
+                </Button>
+              )}
               <Button
                 size="sm"
-                variant="default"
+                variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation()
-                  onApplySuggestion()
+                  onDismiss()
                 }}
                 className="h-7 text-xs gap-1"
               >
-                <Check className="w-3 h-3" />
-                Apply Suggestion
+                <X className="w-3 h-3" />
+                Dismiss
               </Button>
-            )}
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDismiss()
-              }}
-              className="h-7 text-xs gap-1"
-            >
-              <X className="w-3 h-3" />
-              Dismiss
-            </Button>
+            </div>
+
+            <div className="bg-card rounded-md p-2 text-xs border">
+              <p className="text-muted-foreground">
+                <span className="font-semibold text-foreground">Reasoning: </span>
+                {annotation.message}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
-  )
-}
+      </motion.div>
+    )
+  }
+)
+
+FeedbackCard.displayName = 'FeedbackCard'

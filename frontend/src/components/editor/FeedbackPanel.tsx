@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useRef, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FeedbackCard } from './FeedbackCard'
@@ -21,9 +22,19 @@ export function FeedbackPanel({
   onDismissAnnotation,
   onApplySuggestion,
 }: FeedbackPanelProps) {
+  const cardRefs = useRef<Map<string, HTMLDivElement | null>>(new Map())
   const errors = annotations.filter((a) => a.severity === 'error')
   const warnings = annotations.filter((a) => a.severity === 'warning')
   const infos = annotations.filter((a) => a.severity === 'info')
+
+  useEffect(() => {
+    if (selectedAnnotationId) {
+      const card = cardRefs.current.get(selectedAnnotationId)
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+  }, [selectedAnnotationId])
 
   const renderAnnotationList = (items: Annotation[]) => {
     if (items.length === 0) {
@@ -40,6 +51,7 @@ export function FeedbackPanel({
           {items.map((annotation) => (
             <FeedbackCard
               key={annotation.id}
+              ref={(el) => cardRefs.current.set(annotation.id, el)}
               annotation={annotation}
               isSelected={selectedAnnotationId === annotation.id}
               onSelect={() => onSelectAnnotation(annotation.id)}
